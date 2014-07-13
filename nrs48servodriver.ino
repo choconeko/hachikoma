@@ -17,6 +17,7 @@
  ****************************************************/
 #define __AVR__
 
+#include <RFduinoBLE.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
@@ -80,6 +81,13 @@ void setup() {
 
   pwm.begin(5, 6); // yellow clock, green pulse
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+  
+  
+  //ble setup
+  RFduinoBLE.deviceName = "Hachikoma-00";
+  RFduinoBLE.advertisementInterval = 675;
+  RFduinoBLE.advertisementData = "hkm";
+  RFduinoBLE.begin();
 }
 
 // you can use this function if you'd like to set the pulse length in seconds
@@ -274,6 +282,19 @@ void HachikomaLeg::init(int startpin) {
   bottom->init(startpin + 2, 200, 750);
 }
 
+
+void RFduinoBLE_onDisconnect()
+{
+  // don't leave the led on if they disconnect
+  //digitalWrite(led, LOW);
+}
+
+void RFduinoBLE_onReceive(char *data, int len)
+{
+
+    //RFduinoBLE.send(data[0]);
+    RFduinoBLE.send(data,len);
+}
 
 
 
